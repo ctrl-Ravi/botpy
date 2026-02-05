@@ -35,7 +35,7 @@ RULES:
 - You MUST paraphrase – change sentence structure & wording  
 - Keep meaning, price, coupon, and ALL links EXACTLY same  
 - Same language as original (Hindi/Hinglish/English)  
-- add some Light emojis allowed  
+- Add some relatable emojis for better look
 - Keep {length_rule}
 
 DO NOT:
@@ -48,9 +48,9 @@ DO NOT:
 - Repeat sentences from original as-is
 
 If input is non-deal content, still rewrite it as neutral text without adding opinions.
+If input is /settings, /setprompt, /clearprompt don't rewrite because its setting
 
 Rewrite ONLY the provided content.
-
 """
 
 
