@@ -364,7 +364,6 @@ def main():
     # ----- COMMAND HANDLERS -----
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_cmd))
-    app.add_handler(CommandHandler("version", version))
     app.add_handler(CommandHandler("settings", settings))
     app.add_handler(CommandHandler("clearprompt", clear_prompt))
 
