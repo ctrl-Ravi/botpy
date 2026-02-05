@@ -240,31 +240,30 @@ async def clear_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-        text = """
-    📘 HOW TO USE – QUICK GUIDE
-    
-    1️⃣ Paste/ Forward any deal post like:
-    • Amazon / Flipkart offers  
-    • Coupon deals  
-    • Telegram deal text  
-    
-    2️⃣ Bot will generate:
-    TITLE  
-    BODY  
-    
-    3️⃣ Buttons:
-    🔁 Another Style – new rewrite  
-    🩳 Short – compact version  
-    📋 Copy – easy copy  
-    
-    RULES FOLLOWED:
-    • Links never changed  
-    • Price & coupon safe  
-    • No fake claims added  
-    
-    — Pelupa Store Bot
-    """
+    text = """
+            📘 HOW TO USE – QUICK GUIDE
+            
+            1️⃣ Paste/ Forward any deal post like:
+            • Amazon / Flipkart offers  
+            • Coupon deals  
+            • Telegram deal text  
+            
+            2️⃣ Bot will generate:
+            TITLE  
+            BODY  
+            
+            3️⃣ Buttons:
+            🔁 Another Style – new rewrite  
+            🩳 Short – compact version  
+            📋 Copy – easy copy  
+            
+            RULES FOLLOWED:
+            • Links never changed  
+            • Price & coupon safe  
+            • No fake claims added  
+            
+            — Pelupa Store Bot
+        """
     await update.message.reply_text(text)
 
 
