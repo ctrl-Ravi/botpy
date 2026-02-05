@@ -1,5 +1,8 @@
 import os
 import re
+import threading
+import time
+import os
 import requests
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -9,6 +12,23 @@ from telegram.ext import (
     ContextTypes, CallbackQueryHandler,
     CommandHandler, ConversationHandler
 )
+
+def keep_alive():
+    url = os.environ.get("RENDER_EXTERNAL_URL")
+
+    if not url:
+        print("KeepAlive: RENDER_EXTERNAL_URL not found")
+        return
+
+    while True:
+        try:
+            requests.get(url, timeout=10)
+            print("KeepAlive ping sent")
+        except Exception as e:
+            print("KeepAlive error:", e)
+
+        time.sleep(600)
+
 
 TELEGRAM_TOKEN: str | None = os.environ.get('TELEGRAM_TOKEN')
 GEMINI_KEY: str | None = os.environ.get('GEMINI_KEY')
