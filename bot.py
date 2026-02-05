@@ -32,10 +32,10 @@ FORMAT:
 - REMAINING = BODY
 
 RULES:
-- You MUST paraphrase – change sentence structure & wording  
+- You MUST paraphrase change sentence structure & wording  
+- Add some relatable emojis for better look
 - Keep meaning, price, coupon, and ALL links EXACTLY same  
 - Same language as original (Hindi/Hinglish/English)  
-- Add some relatable emojis for better look
 - Keep {length_rule}
 
 DO NOT:
@@ -48,7 +48,6 @@ DO NOT:
 - Repeat sentences from original as-is
 
 If input is non-deal content, still rewrite it as neutral text without adding opinions.
-If input is /settings, /setprompt, /clearprompt don't rewrite because its setting
 
 Rewrite ONLY the provided content.
 """
@@ -164,7 +163,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         f"TITLE:\n{title}\n\nBODY:\n{body}",
         reply_markup=buttons()
     )
+# ================= welcom message =================
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "👋 Welcome!\n\n"
+        "Mujhe koi DEAL POST bhejo — main usko fresh style me rewrite kar dunga 😎\n\n"
+        "Features:\n"
+        "• Title + Body format\n"
+        "• Links same rahenge\n"
+        "• Light emojis\n\n"
+        "Bas message paste/forward karo 🚀"
+    )
 
 # ================= SETTINGS =================
 
@@ -313,54 +323,117 @@ async def copy_body(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ================= MAIN =================
-
 def main():
 
     if TELEGRAM_TOKEN is None:
         print("ERROR: TELEGRAM_TOKEN missing in secrets")
         return
 
-
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
-    app.add_handler(
-        MessageHandler(filters.TEXT | filters.CAPTION, handle_message)
-    )
-
-    app.add_handler(CallbackQueryHandler(again_callback, pattern="again"))
-    app.add_handler(CallbackQueryHandler(short_callback, pattern="short"))
-    app.add_handler(CallbackQueryHandler(copy_title, pattern="copy_title"))
-    app.add_handler(CallbackQueryHandler(copy_body, pattern="copy_body"))
-
+    # ----- COMMAND HANDLERS -----
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help_cmd))
+    app.add_handler(CommandHandler("version", version))
     app.add_handler(CommandHandler("settings", settings))
     app.add_handler(CommandHandler("clearprompt", clear_prompt))
 
+    # ----- CONVERSATION -----
     conv = ConversationHandler(
         entry_points=[CommandHandler("setprompt", ask_prompt)],
-        states={SET_PROMPT: [MessageHandler(filters.TEXT, save_prompt)]},
+        states={
+            SET_PROMPT: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, save_prompt)
+            ]
+        },
         fallbacks=[]
     )
 
     app.add_handler(conv)
 
-        # ---- Fake HTTP server for Render ----
+    # ----- CALLBACK BUTTONS -----
+    app.add_handler(CallbackQueryHandler(again_callback, pattern="again"))
+    app.add_handler(CallbackQueryHandler(short_callback, pattern="short"))
+    app.add_handler(CallbackQueryHandler(copy_title, pattern="copy_title"))
+    app.add_handler(CallbackQueryHandler(copy_body, pattern="copy_body"))
+
+    # ----- NORMAL MESSAGE HANDLER (LAST) -----
+    app.add_handler(
+        MessageHandler(
+            (filters.TEXT | filters.CAPTION) & ~filters.COMMAND,
+            handle_message
+        )
+    )
+
+    # ---- Fake HTTP server for Render ----
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"Bot is running")
-    
+
     def run_server():
         port = int(os.environ.get("PORT", 10000))
         server = HTTPServer(("0.0.0.0", port), Handler)
         server.serve_forever()
-    
+
     threading.Thread(target=run_server, daemon=True).start()
     # -------------------------------------
 
-
     print("Bot Started...")
     app.run_polling()
+
+# def main():
+
+#     if TELEGRAM_TOKEN is None:
+#         print("ERROR: TELEGRAM_TOKEN missing in secrets")
+#         return
+
+
+#     app = Application.builder().token(TELEGRAM_TOKEN).build()
+    
+#     app.add_handler(CommandHandler("start", start))
+#     app.add_handler(
+#         MessageHandler(
+#             (filters.TEXT | filters.CAPTION) & ~filters.COMMAND,
+#             handle_message
+#         )
+#     )
+
+#     app.add_handler(CallbackQueryHandler(again_callback, pattern="again"))
+#     app.add_handler(CallbackQueryHandler(short_callback, pattern="short"))
+#     app.add_handler(CallbackQueryHandler(copy_title, pattern="copy_title"))
+#     app.add_handler(CallbackQueryHandler(copy_body, pattern="copy_body"))
+
+#     app.add_handler(CommandHandler("settings", settings))
+#     app.add_handler(CommandHandler("clearprompt", clear_prompt))
+
+#     conv = ConversationHandler(
+#         entry_points=[CommandHandler("setprompt", ask_prompt)],
+#         states={SET_PROMPT: [MessageHandler(filters.TEXT, save_prompt)]},
+#         fallbacks=[]
+#     )
+
+#     app.add_handler(conv)
+
+#         # ---- Fake HTTP server for Render ----
+#     class Handler(BaseHTTPRequestHandler):
+#         def do_GET(self):
+#             self.send_response(200)
+#             self.end_headers()
+#             self.wfile.write(b"Bot is running")
+    
+#     def run_server():
+#         port = int(os.environ.get("PORT", 10000))
+#         server = HTTPServer(("0.0.0.0", port), Handler)
+#         server.serve_forever()
+    
+#     threading.Thread(target=run_server, daemon=True).start()
+#     # -------------------------------------
+
+
+#     print("Bot Started...")
+#     app.run_polling()
 
 
 if __name__ == "__main__":
