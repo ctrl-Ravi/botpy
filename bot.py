@@ -32,24 +32,23 @@ FORMAT:
 - REMAINING = BODY
 
 RULES:
-- You MUST paraphrase change sentence structure & wording  
-- Add some relatable emojis for better look
+- You MUST paraphrase: change sentence structure & wording 
+- You MAY add light relatable emojis for readability 
 - Keep meaning, price, coupon, and ALL links EXACTLY same  
 - Same language as original (Hindi/Hinglish/English)  
 - Keep {length_rule}
 
 DO NOT:
-- Add any new information  
-- Add benefits, CTA, or marketing claims  
-- Ask questions or suggestions  
-- Write help/tutorial/community text  
-- Act like an assistant  
-- Use words like "Part 1/Title/Body"  
-- Repeat sentences from original as-is
+- Add any new facts or claims  
+- Add benefits, CTA, urgency or marketing lines  
+- Ask questions or give suggestions  
+- Write as an assistant or add explanations  
+- Repeat original sentences word-to-word
+- Use words like "Part 1/Title/Body"
 
 If input is non-deal content, still rewrite it as neutral text without adding opinions.
 
-Rewrite ONLY the provided content.
+OUTPUT ONLY the rewritten content. No extra text.
 """
 
 
@@ -189,6 +188,7 @@ async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 /setprompt – Custom prompt  
 /clearprompt – Default
+/help – How to use 
 """)
 
 
@@ -237,6 +237,36 @@ async def clear_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     USER_SETTINGS[user_id]["prompt"] = DEFAULT_PROMPT
 
     await message.reply_text("Default prompt restore ho gaya")
+
+
+async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+        text = """
+    📘 HOW TO USE – QUICK GUIDE
+    
+    1️⃣ Paste/ Forward any deal post like:
+    • Amazon / Flipkart offers  
+    • Coupon deals  
+    • Telegram deal text  
+    
+    2️⃣ Bot will generate:
+    TITLE  
+    BODY  
+    
+    3️⃣ Buttons:
+    🔁 Another Style – new rewrite  
+    🩳 Short – compact version  
+    📋 Copy – easy copy  
+    
+    RULES FOLLOWED:
+    • Links never changed  
+    • Price & coupon safe  
+    • No fake claims added  
+    
+    — Pelupa Store Bot
+    """
+    await update.message.reply_text(text)
+
 
 
 # ================= CALLBACKS =================
