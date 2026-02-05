@@ -15,6 +15,8 @@ from telegram.ext import (
 
 def keep_alive():
     url = os.environ.get("RENDER_EXTERNAL_URL")
+    
+    print("KeepAlive URL:", url)
 
     if not url:
         print("KeepAlive: RENDER_EXTERNAL_URL not found")
@@ -426,6 +428,7 @@ def main():
         server.serve_forever()
 
     threading.Thread(target=run_server, daemon=True).start()
+    threading.Thread(target=keep_alive, daemon=True).start()
     # -------------------------------------
 
     print("Bot Started...")
