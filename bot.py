@@ -77,8 +77,19 @@ OUTPUT ONLY the rewritten content. No extra text.
 # ================= GEMINI CALL =================
 
 async def call_ai(text: str, user_id: int, mode: str = "normal") -> str:
+    # ---- Link Protection: Extract & Hide Links ----
+    
+    links_storage = {}
+    
+    def link_replacer(match):
+        # Generate a unique placeholder
+        placeholder = f"__LINK_{len(links_storage)}__"
+        # Store the actual link
+        links_storage[placeholder] = match.group(0)
+        return placeholder
 
-    links = re.findall(r'https?://\S+', text)
+    # Replace all links with placeholders like __LINK_0__, __LINK_1__
+    text_with_placeholders = re.sub(r'https?://\S+', link_replacer, text)
 
     setting = USER_SETTINGS.get(user_id, {})
     custom_prompt = setting.get("prompt", DEFAULT_PROMPT)
@@ -93,7 +104,7 @@ async def call_ai(text: str, user_id: int, mode: str = "normal") -> str:
 Extra Rule: {length_rule}
 
 ORIGINAL POST:
-{text}
+{text_with_placeholders}
 """
 
     try:
@@ -122,9 +133,11 @@ ORIGINAL POST:
         if not output:
             return "AI empty response"
 
-        # ---- Link Protection ----
-        for link in links:
-            output = re.sub(r'https?://\S+', link, output, count=1)
+        # ---- Restore Links ----
+        # Loop through stored links and put them back
+        # We do this carefully to avoid any partial matches, though placeholders are unique enough
+        for placeholder, original_link in links_storage.items():
+            output = output.replace(placeholder, original_link)
 
         return output
 
