@@ -1,4 +1,5 @@
 import os
+import asyncio
 import re
 import threading
 import time
@@ -115,23 +116,27 @@ ORIGINAL POST:
 """
 
     try:
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {os.environ.get('OPENROUTER_KEY')}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://localhost",
-                "X-Title": "telegram-bot"
-            },
-            json={
-                "model": "openai/gpt-4o-mini",
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.7
-            },
-            timeout=60
-        )
+        def make_request():
+            return requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {os.environ.get('OPENROUTER_KEY')}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://localhost",
+                    "X-Title": "telegram-bot"
+                },
+                json={
+                    "model": "openai/gpt-4o-mini",
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.7
+                },
+                timeout=60
+            )
+
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, make_request)
 
         data = response.json()
 
