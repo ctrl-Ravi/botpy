@@ -89,7 +89,8 @@ async def call_ai(text: str, user_id: int, mode: str = "normal") -> str:
         return placeholder
 
     # Replace all links with placeholders like __LINK_0__, __LINK_1__
-    text_with_placeholders = re.sub(r'https?://\S+', link_replacer, text)
+    # Use [^\s,)]+ to avoid capturing trailing punctuation like ) or ,
+    text_with_placeholders = re.sub(r'https?://[^\s,)]+', link_replacer, text)
 
     setting = USER_SETTINGS.get(user_id, {})
     custom_prompt = setting.get("prompt", DEFAULT_PROMPT)
