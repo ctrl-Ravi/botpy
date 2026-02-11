@@ -101,6 +101,12 @@ async def call_ai(text: str, user_id: int, mode: str = "normal") -> str:
     prompt = f"""
 {custom_prompt}
 
+CRITICAL: 
+The input text contains placeholders like __LINK_0__, __LINK_1__.
+You MUST output these placeholders EXACTLY as they are in the rewritten text.
+Do NOT change them to [Link], URL, or anything else.
+Keep them in the correct position relative to the product/item.
+
 Extra Rule: {length_rule}
 
 ORIGINAL POST:
